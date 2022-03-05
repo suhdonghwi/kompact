@@ -1,6 +1,11 @@
 import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
 import { Button, Container, Stack, styled, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { auth } from '../firebase';
@@ -19,6 +24,7 @@ function Login() {
   const onSubmit = useCallback(async (data: LoginData) => {
     setLoading(true);
     try {
+      await setPersistence(auth, browserLocalPersistence);
       await signInWithEmailAndPassword(auth, data.email, data.password);
     } catch (error) {
       console.error(error);

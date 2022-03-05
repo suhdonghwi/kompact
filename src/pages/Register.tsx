@@ -1,6 +1,11 @@
 import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
 import { Container, Stack, styled, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { auth } from '../firebase';
@@ -18,6 +23,7 @@ function Register() {
   const onSubmit = useCallback(async (data: RegisterData) => {
     setLoading(true);
     try {
+      await setPersistence(auth, browserLocalPersistence);
       const { user } = await createUserWithEmailAndPassword(
         auth,
         data.email,

@@ -76,6 +76,7 @@ const Container = styled.div`
 
 function Profile() {
   const user = useRecoilValue(userState);
+  console.log(user);
 
   /*
   if (!user) {
