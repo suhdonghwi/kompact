@@ -1,18 +1,22 @@
+import { PerspectiveCamera } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0);
+import Macintosh from "./models/Macintosh";
 
+function App() {
   return (
     <div className="App">
       <Canvas>
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
-        <mesh>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="hotpink" />
-        </mesh>
+
+        <PerspectiveCamera
+          position={[0, 2, 4]}
+          makeDefault
+        />
+
+        <Macintosh position={[0, 0, 0]} scale={[10, 10, 10]} />
       </Canvas>
     </div>
   );
