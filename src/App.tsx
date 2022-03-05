@@ -1,4 +1,10 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { userState } from './atoms/firebase';
+import Login from './Login';
+import Profile from './Profile';
+import Register from './Register';
 
 const Container = styled.div`
   display: flex;
@@ -15,11 +21,22 @@ const Title = styled.h1`
 `;
 
 function App() {
+  const user = useRecoilValue(userState);
   return (
-    <Container>
-      <Title>Welcome to Kompact</Title>
-    </Container>
+    <BrowserRouter>
+      <Routes>
+        {user && user.displayName ? <></> : <></>}
+        <Route path="/" element={<Title>Hello, world!</Title>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App;
+export default () => (
+  <RecoilRoot>
+    <App />
+  </RecoilRoot>
+);

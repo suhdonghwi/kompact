@@ -1,12 +1,12 @@
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { AtomEffect } from 'recoil';
 
-const auth = getAuth();
-
 const firebaseUserEffect =
   (): AtomEffect<User | null> =>
   ({ setSelf, trigger }) => {
-    // Initialize atom value to the remote storage state
+    const auth = getAuth();
+
+    // Initialize atom value
     if (trigger === 'get') {
       setSelf(auth.currentUser);
     }
@@ -18,6 +18,7 @@ const firebaseUserEffect =
         setSelf(user);
       } else {
         // User is signed out
+        setSelf(null);
       }
     });
   };
