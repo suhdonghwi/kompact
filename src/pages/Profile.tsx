@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Navigate } from 'react-router-dom';
 
 import DiskSlider from '../components/DiskSlider';
 import Rom from '../components/Rom';
@@ -9,6 +10,9 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 
 import Monitor from '../components/Monitor';
 import { useMemo } from 'react';
+import Macintosh from '../models/Macintosh';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../atoms/firebase';
 
 function CameraTransition({ show }: { show: boolean }) {
   const { camera } = useThree();
@@ -49,12 +53,8 @@ function ThreeCanvas() {
   return (
     <Canvas>
       <ambientLight intensity={0.7} />
-      <pointLight position={[5, 10, 7]} intensity={1.0} />
 
-      <PerspectiveCamera position={[0, 0.18, 0.48]} makeDefault />
-      <CameraTransition show={true} />
-
-      <Monitor images={images} />
+      <Macintosh position={[0, 0, 0]} />
     </Canvas>
   );
 }
@@ -75,11 +75,20 @@ const Container = styled.div`
 `;
 
 function Profile() {
+  const user = useRecoilValue(userState);
+
+  /*
+  if (!user) {
+    return <Navigate to="login" />;
+  }
+  */
+
   return (
     <>
       <ThreeBackground>
         <ThreeCanvas />
       </ThreeBackground>
+
       <Container>
         <Rom />
         <DiskSlider email="sgmin.park@gmail.com" />

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { Reset } from 'styled-reset';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -7,7 +7,6 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
 import EditDisk from './pages/EditDisk';
-import DiskSlider2 from './components/DiskSlider2';
 import { Button } from '@mui/material';
 
 import { signOut } from 'firebase/auth';
@@ -44,21 +43,12 @@ function App() {
       <Reset />
       <BrowserRouter>
         <Routes>
-          {user && user.displayName ? <></> : <></>}
-          <Route
-            path="/"
-            element={
-              <Container>
-                <Title>Hello, world!</Title>
-                <Button onClick={() => signOut(auth)}>Sign Out</Button>
-              </Container>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route index element={<Navigate to="profile" />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-disk" element={<EditDisk />} />
           <Route path="/create-disk" element={<CreateDisk />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { Container, Stack, styled, TextField } from '@mui/material';
+import { Button, Container, Stack, styled, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginData {
   email: string;
@@ -13,6 +14,7 @@ interface LoginData {
 function Login() {
   const { control, handleSubmit } = useForm<LoginData>({});
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const onSubmit = useCallback(async (data: LoginData) => {
     setLoading(true);
@@ -64,6 +66,9 @@ function Login() {
           <LoadingButton type="submit" loading={loading} variant="contained">
             로그인
           </LoadingButton>
+          <Button onClick={() => navigate('/register')} variant="outlined">
+            회원가입
+          </Button>
         </CenteredStack>
       </Container>
     </form>

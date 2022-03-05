@@ -70,7 +70,7 @@ const StyledDisk = styled(Disk)`
   height: 300px;
 `;
 
-type DiskDoc = { id: string; name: string };
+type DiskDoc = { id: string; name: string; length: number };
 
 function DiskSlider({ email }: { email: string }) {
   const [items, setItems] = useState<Item[]>([]);
@@ -85,18 +85,28 @@ function DiskSlider({ email }: { email: string }) {
         return {
           id: doc.id,
           name: data.name,
-          images: [],
-          cover: `${data.id}/cover.png`,
+          images: Array.from(Array(data.length)).map((_, i) => ({
+            url:
+              'https://firebasestorage.googleapis.com/v0/b/kompact-archive.appspot.com/o/' +
+              doc.id +
+              '%2F' +
+              i +
+              '?alt=media',
+          })),
+          cover:
+            'https://firebasestorage.googleapis.com/v0/b/kompact-archive.appspot.com/o/' +
+            doc.id +
+            '%2Fcover' +
+            '?alt=media',
         };
       });
       setItems(d);
-      console.log(d);
     })();
   }, []);
 
   return (
     <List>
-      {_items.map((item, i) => (
+      {items.map((item, i) => (
         <Item key={i}>
           <AnimatedDisk cover={item.cover} />
         </Item>
