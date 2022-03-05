@@ -4,6 +4,7 @@ const RomBox = styled.div`
   width: 300px;
   height: 300px;
   background-image: url('/img/rom.png');
+  background-size: contain;
 
   position: absolute;
   left: 50%;

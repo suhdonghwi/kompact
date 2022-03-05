@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
+import DiskSlider from '../components/DiskSlider';
+import Rom from '../components/Rom';
+
 import { easings, useSpring } from '@react-spring/three';
 import { PerspectiveCamera } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 
-import DiskSlider from '../components/DiskSlider';
-import Rom from '../components/Rom';
 import Monitor from '../components/Monitor';
 import { useMemo } from 'react';
 
@@ -58,11 +59,6 @@ function ThreeCanvas() {
   );
 }
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
 const ThreeBackground = styled.div`
   position: absolute;
   top: 0;
@@ -73,12 +69,22 @@ const ThreeBackground = styled.div`
   height: 100vh;
 `;
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 function Profile() {
   return (
-    <Container>
-      <Rom />
-      <DiskSlider email="hwidongsuh@gmail.com" />
-    </Container>
+    <>
+      <ThreeBackground>
+        <ThreeCanvas />
+      </ThreeBackground>
+      <Container>
+        <Rom />
+        <DiskSlider email="sgmin.park@gmail.com" />
+      </Container>
+    </>
   );
 }
 

@@ -15,6 +15,7 @@ import {
   Paper,
   Stack,
   TextField,
+  Container as Center,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Add as AddIcon } from '@mui/icons-material';
@@ -91,14 +92,17 @@ function CreateDisk() {
 
   return (
     <Container>
-      <TextField
-        placeholder="Disk Name"
-        onChange={(e) => {
-          setDiskName(e.target.value);
-        }}
-        variant="standard"
-        disabled={uploading}
-      />
+      <Center maxWidth="lg">
+        <TextField
+          placeholder="Disk Name"
+          onChange={(e) => {
+            setDiskName(e.target.value);
+          }}
+          variant="standard"
+          fullWidth
+          disabled={uploading}
+        />
+      </Center>
       <ImagesWrapper>
         <Stack direction="row" spacing={2}>
           {files.map((file) => (

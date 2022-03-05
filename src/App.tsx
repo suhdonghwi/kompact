@@ -15,6 +15,11 @@ import { auth } from './firebase';
 import { useEffect } from 'react';
 import CreateDisk from './pages/CreateDisk';
 
+import { Globals } from '@react-spring/shared';
+Globals.assign({
+  frameLoop: 'always',
+});
+
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -54,7 +59,6 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-disk" element={<EditDisk />} />
           <Route path="/create-disk" element={<CreateDisk />} />
-          <Route path="/test" element={<DiskSlider2 email="" />} />
         </Routes>
       </BrowserRouter>
     </>

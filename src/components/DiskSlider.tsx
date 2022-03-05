@@ -8,7 +8,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { useSpring, animated } from 'react-spring';
+import { useSpring, animated } from '@react-spring/web';
 import styled from 'styled-components';
 import Disk from './Disk';
 
@@ -66,8 +66,8 @@ const List = styled.ul`
 const Item = styled.li``;
 
 const StyledDisk = styled(Disk)`
-  width: 150px;
-  height: 150px;
+  width: 300px;
+  height: 300px;
 `;
 
 type DiskDoc = { id: string; name: string };
@@ -80,17 +80,17 @@ function DiskSlider({ email }: { email: string }) {
       const disksRef = collection(db, 'disks');
       const q = query(disksRef, where('email', '==', email));
       const querySnapshot = await getDocs(q);
-      setItems(
-        querySnapshot.docs.map((doc) => {
-          const data = doc.data() as DiskDoc;
-          return {
-            id: data.id,
-            name: data.name,
-            images: [],
-            cover: `${data.id}/cover.png`,
-          };
-        }),
-      );
+      const d = querySnapshot.docs.map((doc) => {
+        const data = doc.data() as DiskDoc;
+        return {
+          id: doc.id,
+          name: data.name,
+          images: [],
+          cover: `${data.id}/cover.png`,
+        };
+      });
+      setItems(d);
+      console.log(d);
     })();
   }, []);
 
@@ -105,18 +105,12 @@ function DiskSlider({ email }: { email: string }) {
   );
 }
 
-const CoverImg = styled.div`
-  width: 300px;
-  height: 300px;
-  background-size: contain;
-`;
-
 function AnimatedDisk({ cover }: { cover: string }) {
   const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
   const bind = useGesture(
     {
       onDrag: ({ down, movement: [mx, my] }) => {
-        api.start({ x: down ? mx : 0, y: down ? my : 0 });
+        api.start({ x: down ? mx : 0, y: down ? my : 0, immediate: down });
       },
       onDragEnd: ({ xy: [x, y] }) => {
         console.log(x, y);
@@ -126,8 +120,8 @@ function AnimatedDisk({ cover }: { cover: string }) {
   );
 
   return (
-    <animated.div {...bind()} style={{ x, y, touchAction: 'none' }}>
-      <CoverImg style={{ backgroundImage: `url(${cover})` }} />
+    <animated.div style={{ x, y, touchAction: 'none' }} {...bind()}>
+      <StyledDisk backgroundImage={cover} />
     </animated.div>
   );
 }

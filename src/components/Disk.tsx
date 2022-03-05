@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 
-const Disk = styled.div<{ backgroundImage?: string }>`
+interface DiskProps {
+  backgroundImage?: string;
+}
+
+const Disk = styled.div<DiskProps>`
+  position: relative;
   border-radius: 100%;
   border: 1px solid grey;
   background: ${({ backgroundImage }) =>
