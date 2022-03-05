@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { Container, Stack, styled, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { auth } from '../firebase';
 
 interface RegisterData {
   username: string;
@@ -16,9 +17,12 @@ function Register() {
 
   const onSubmit = useCallback(async (data: RegisterData) => {
     setLoading(true);
-    const auth = getAuth();
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password,
+      );
       await updateProfile(user, { displayName: data.username });
     } catch (error) {
       console.error(error);
@@ -30,10 +34,48 @@ function Register() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Container maxWidth="xs">
         <CenteredStack spacing={2}>
-          <Controller name="username" control={control} render={({ field }) => <TextField label="이름" variant="outlined" {...field} />} />
-          <Controller name="email" control={control} render={({ field }) => <TextField label="이메일" variant="outlined" {...field} />} />
-          <Controller name="password" control={control} render={({ field }) => <TextField label="비밀번호" variant="outlined" {...field} />} />
-          <LoadingButton onClick={() => handleSubmit(onSubmit)} loading={loading} variant="contained">
+          <Controller
+            name="username"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <TextField label="이름" required variant="outlined" {...field} />
+            )}
+          />
+          <Controller
+            name="email"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <TextField
+                label="이메일"
+                type="email"
+                required
+                variant="outlined"
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            name="password"
+            defaultValue=""
+            control={control}
+            rules={{
+              minLength: { value: 6, message: '비밀번호는 최소 6자입니다.' },
+            }}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="비밀번호"
+                error={fieldState.error?.type === 'minLength'}
+                helperText={fieldState.error?.message}
+                type="password"
+                required
+                variant="outlined"
+                {...field}
+              />
+            )}
+          />
+          <LoadingButton type="submit" loading={loading} variant="contained">
             가입
           </LoadingButton>
         </CenteredStack>

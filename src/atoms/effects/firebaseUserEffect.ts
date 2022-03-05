@@ -1,11 +1,10 @@
-import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '../../firebase';
 import { AtomEffect } from 'recoil';
 
 const firebaseUserEffect =
   (): AtomEffect<User | null> =>
   ({ setSelf, trigger }) => {
-    const auth = getAuth();
-
     // Initialize atom value
     if (trigger === 'get') {
       setSelf(auth.currentUser);

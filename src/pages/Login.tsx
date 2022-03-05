@@ -3,6 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { Container, Stack, styled, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { auth } from '../firebase';
 
 interface LoginData {
   email: string;
@@ -13,11 +14,10 @@ function Login() {
   const { control, handleSubmit } = useForm<LoginData>({});
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = useCallback((data: LoginData) => {
+  const onSubmit = useCallback(async (data: LoginData) => {
     setLoading(true);
-    const auth = getAuth();
     try {
-      signInWithEmailAndPassword(auth, data.email, data.password);
+      await signInWithEmailAndPassword(auth, data.email, data.password);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -28,9 +28,36 @@ function Login() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Container maxWidth="xs">
         <CenteredStack spacing={2}>
-          <Controller name="email" control={control} render={({ field }) => <TextField label="이메일" variant="outlined" {...field} />} />
-          <Controller name="password" control={control} render={({ field }) => <TextField label="비밀번호" variant="outlined" {...field} />} />
-          <LoadingButton onClick={() => handleSubmit(onSubmit)} loading={loading} variant="contained">
+          <Controller
+            name="email"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <TextField
+                label="이메일"
+                type="email"
+                required
+                variant="outlined"
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            name="password"
+            defaultValue=""
+            control={control}
+            rules={{ minLength: 6 }}
+            render={({ field }) => (
+              <TextField
+                label="비밀번호"
+                type="password"
+                required
+                variant="outlined"
+                {...field}
+              />
+            )}
+          />
+          <LoadingButton type="submit" loading={loading} variant="contained">
             로그인
           </LoadingButton>
         </CenteredStack>
