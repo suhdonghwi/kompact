@@ -22,7 +22,7 @@ export default function Monitor() {
       const img = new Image();
       img.src = "sample.png";
       img.onload = () => {
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        context.drawImage(img, 70, 170, 700, 500);
       };
     }
   }, []);
@@ -36,11 +36,11 @@ export default function Monitor() {
   return (
     <group>
       <Suspense fallback={null}>
-        <Macintosh scale={[0.001, 0.001, 0.001]} position={[0, 1.5, 4.5]} />
+        <Macintosh position={[0, 0, 0]} />
       </Suspense>
 
-      <mesh position={[0, 1.68, 4.81]} rotation={[-Math.PI / 24, 0, 0]}>
-        <planeBufferGeometry args={[0.6, 0.45]} />
+      <mesh position={[0, 0.2, 0.208]} rotation={[-Math.PI / 30, 0, 0]}>
+        <planeBufferGeometry args={[0.17, 0.17]} />
         <meshBasicMaterial attach="material">
           <canvasTexture
             ref={textureRef}

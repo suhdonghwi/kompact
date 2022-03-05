@@ -9,9 +9,10 @@ function App() {
   return (
     <div className="App">
       <Canvas gl={{ antialias: true }}>
-        <ambientLight intensity={0.3} />
+        <ambientLight intensity={0.7} />
+        <pointLight position={[5, 10, 7]} intensity={1.0} />
 
-        <PerspectiveCamera position={[0, 1.5, 6]} makeDefault />
+        <PerspectiveCamera position={[0, 0.17, 0.5]} makeDefault />
 
         <Monitor />
       </Canvas>
