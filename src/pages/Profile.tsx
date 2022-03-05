@@ -1,96 +1,73 @@
 import styled from 'styled-components';
+
+import { easings, useSpring } from '@react-spring/three';
+import { PerspectiveCamera } from '@react-three/drei';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+
 import DiskSlider from '../components/DiskSlider';
-import { a } from '@react-spring/web';
+import Rom from '../components/Rom';
+import Monitor from '../components/Monitor';
+import { useMemo } from 'react';
 
-const items = [
-  {
-    css: 'url(/img/disk-ex-1.png)',
-    height: 10,
-  },
-  {
-    css: 'url(/img/disk-ex-2.png)',
-    height: 100,
-  },
-  {
-    css: 'url(/img/disk-ex-3.png)',
-    height: 100,
-  },
-  {
-    css: 'url(/img/disk-ex-3.png)',
-    height: 100,
-  },
-  {
-    css: 'url(/img/disk-ex-3.png)',
-    height: 100,
-  },
-  {
-    css: 'url(/img/disk-ex-3.png)',
-    height: 100,
-  },
-  {
-    css: 'url(/img/disk-ex-3.png)',
-    height: 100,
-  },
-  {
-    css: 'url(/img/disk-ex-3.png)',
-    height: 100,
-  },
-  {
-    css: 'url(/img/disk-ex-3.png)',
-    height: 100,
-  },
-];
+function CameraTransition({ show }: { show: boolean }) {
+  const { camera } = useThree();
+  const springProps = useSpring({
+    config: { duration: 2000, easing: easings.easeOutQuart },
+    x: 0,
+    y: 0.18,
+    z: show ? 0.48 : 2,
+    rotX: show ? 0 : -Math.PI / 2,
+    rotY: 0,
+    rotZ: 0,
+  });
 
-const Content = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 10px 10px;
-`;
+  useFrame(() => {
+    camera.position.x = springProps.x.get();
+    camera.position.y = springProps.y.get();
+    camera.position.z = springProps.z.get();
 
-const Marker = styled.div`
-  color: white;
-  position: absolute;
-  top: 0px;
-  left: 140px;
-  font-family: monospace;
-`;
+    camera.rotation.x = springProps.rotX.get();
+    camera.rotation.y = springProps.rotY.get();
+    camera.rotation.z = springProps.rotZ.get();
+  });
 
-const Image = styled(a.div)`
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center center;
-`;
+  return <></>;
+}
 
-const ListContainer = styled.div`
-  width: 100%;
-  height: 250px;
-`;
+function ThreeCanvas() {
+  const images = useMemo(() => {
+    const img = new Image();
+    img.src = 'img/sample.png';
 
-const ImageList = () => {
+    const img2 = new Image();
+    img2.src = 'img/sample2.png';
+
+    return [img, img2];
+  }, []);
+
   return (
-    <ListContainer>
-      <DiskSlider items={items} width={250} visible={7}>
-        {({ css }: any, i: any) => (
-          <Content>
-            <Marker>{String(i).padStart(2, '0')}</Marker>
-            <Image style={{ backgroundImage: css }} />
-          </Content>
-        )}
-      </DiskSlider>
-    </ListContainer>
+    <Canvas gl={{ antialias: true }}>
+      <ambientLight intensity={0.7} />
+      <pointLight position={[5, 10, 7]} intensity={1.0} />
+
+      <PerspectiveCamera position={[0, 0.18, 0.48]} makeDefault />
+      <CameraTransition show={true} />
+
+      <Monitor images={images} />
+    </Canvas>
   );
-};
+}
 
 const Container = styled.div`
-  width: 100%;
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 function Profile() {
   return (
     <Container>
-      <ImageList />
+      <Rom />
+      <DiskSlider />
     </Container>
   );
 }

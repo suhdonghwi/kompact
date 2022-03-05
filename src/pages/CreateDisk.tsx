@@ -13,26 +13,56 @@ import {
   Button,
   ImageList,
   ImageListItem,
+  Paper,
   Stack,
   TextField,
 } from '@mui/material';
-import './Disk.css';
+import { Add as AddIcon } from '@mui/icons-material';
+import Disk from '../components/Disk';
 
 const Container = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
 `;
 
-const InputWrapper = styled.div`
+const ImagesWrapper = styled.div`
+  width: 100vw;
+  margin-left: 2rem;
   margin-top: 1rem;
+  overflow-x: scroll;
+`;
+
+const UploadButtonWrapper = styled.div`
+  position: absolute;
+  right: 0;
+`;
+
+const StyledDisk = styled(Disk)`
+  position: absolute;
+  width: 50vw;
+  height: 50vw;
+  bottom: -25vw;
+  left: 25vw;
+`;
+
+const AddButton = styled(Paper)`
+  width: 30vh;
+  height: 30vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const InvisibleInput = styled.input`
+  display: none;
 `;
 
 function CreateDisk() {
   const [diskName, setDiskName] = useState('');
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const email = useRecoilValue(userState)?.email;
 
@@ -54,45 +84,64 @@ function CreateDisk() {
       await uploadBytes(storageRef, files[i]);
     }
     setUploading(false);
-    alert('success!!');
+    alert('업로드 성공!!');
   };
 
   return (
     <Container>
-      <InputWrapper>
-        <TextField
-          placeholder="Disk Name"
-          onChange={(e) => {
-            setDiskName(e.target.value);
-          }}
-          variant="standard"
-          disabled={uploading}
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <input
-          type="file"
-          multiple
-          onChange={(e) => {
-            setFiles(e.target.files);
-          }}
-        />
-      </InputWrapper>
-      <ImageList cols={files?.length} style={{ width: '100%' }}>
-        {Array.from(files || []).map((file) => (
-          <ImageListItem key={file.name}>
+      <TextField
+        placeholder="Disk Name"
+        onChange={(e) => {
+          setDiskName(e.target.value);
+        }}
+        variant="standard"
+        disabled={uploading}
+      />
+      <ImagesWrapper>
+        <Stack direction="row" spacing={2}>
+          {files.map((file) => (
             <img
+              key={file.name}
               src={`${URL.createObjectURL(file)}`}
               style={{ height: '30vh' }}
               loading="lazy"
             />
-          </ImageListItem>
-        ))}
-      </ImageList>
-      <div className="cd"></div>
-      <InputWrapper>
+          ))}
+          <label htmlFor="contained-button-file">
+            <InvisibleInput
+              id="contained-button-file"
+              type="file"
+              multiple
+              onChange={(e) => {
+                setFiles((prevFiles) => [
+                  ...prevFiles,
+                  ...Array.from(e.target.files || []),
+                ]);
+              }}
+            />
+            <AddButton variant="outlined">
+              <AddIcon />
+            </AddButton>
+          </label>
+        </Stack>
+      </ImagesWrapper>
+      <label htmlFor="cover-image">
+        <InvisibleInput
+          id="cover-image"
+          type="file"
+          onChange={(e) => {
+            setCoverFile(e.target.files?.[0] || null);
+          }}
+        />
+        <StyledDisk
+          backgroundImage={
+            coverFile ? `${URL.createObjectURL(coverFile)}` : undefined
+          }
+        />
+      </label>
+      <UploadButtonWrapper>
         <Button onClick={upload}>Upload</Button>
-      </InputWrapper>
+      </UploadButtonWrapper>
     </Container>
   );
 }
