@@ -37,16 +37,16 @@ function CameraTransition({ show }: { show: boolean }) {
 function ThreeCanvas() {
   const images = useMemo(() => {
     const img = new Image();
-    img.src = 'img/sample.png';
+    img.src = 'img/disk-ex-1.png';
 
     const img2 = new Image();
-    img2.src = 'img/sample2.png';
+    img2.src = 'img/disk-ex-2.png';
 
     return [img, img2];
   }, []);
 
   return (
-    <Canvas gl={{ antialias: true }}>
+    <Canvas>
       <ambientLight intensity={0.7} />
       <pointLight position={[5, 10, 7]} intensity={1.0} />
 
@@ -63,11 +63,21 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
+const ThreeBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+
+  width: 100vw;
+  height: 100vh;
+`;
+
 function Profile() {
   return (
     <Container>
       <Rom />
-      <DiskSlider />
+      <DiskSlider email="hwidongsuh@gmail.com" />
     </Container>
   );
 }

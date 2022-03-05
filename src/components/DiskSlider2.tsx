@@ -4,7 +4,6 @@ import {
   getDocs,
   getFirestore,
   query,
-  QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
@@ -51,6 +50,10 @@ const _items: Item[] = [
   },
 ];
 
+const Container = styled.div`
+  position: relative;
+`;
+
 const List = styled.ul`
   overflow-x: scroll;
   height: 100vh;
@@ -66,8 +69,8 @@ const List = styled.ul`
 const Item = styled.li``;
 
 const StyledDisk = styled(Disk)`
-  width: 150px;
-  height: 150px;
+  width: 300px;
+  height: 300px;
 `;
 
 type DiskDoc = { id: string; name: string };
@@ -95,13 +98,15 @@ function DiskSlider({ email }: { email: string }) {
   }, []);
 
   return (
-    <List>
-      {_items.map((item, i) => (
-        <Item key={i}>
-          <AnimatedDisk cover={item.cover} />
-        </Item>
-      ))}
-    </List>
+    <Container>
+      <List>
+        {_items.map((item, i) => (
+          <Item key={i}>
+            <AnimatedDisk cover={item.cover} />
+          </Item>
+        ))}
+      </List>
+    </Container>
   );
 }
 
@@ -127,7 +132,7 @@ function AnimatedDisk({ cover }: { cover: string }) {
 
   return (
     <animated.div {...bind()} style={{ x, y, touchAction: 'none' }}>
-      <CoverImg style={{ backgroundImage: `url(${cover})` }} />
+      <StyledDisk backgroundImage={cover} />
     </animated.div>
   );
 }

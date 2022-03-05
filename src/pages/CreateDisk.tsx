@@ -10,13 +10,13 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../atoms/firebase';
 import {
-  Button,
   ImageList,
   ImageListItem,
   Paper,
   Stack,
   TextField,
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { Add as AddIcon } from '@mui/icons-material';
 import Disk from '../components/Disk';
 
@@ -67,7 +67,7 @@ function CreateDisk() {
   const email = useRecoilValue(userState)?.email;
 
   const upload = async () => {
-    if (!files) return;
+    if (!files || !coverFile) return;
     setUploading(true);
     const storage = getStorage();
     const db = getFirestore();
@@ -79,6 +79,8 @@ function CreateDisk() {
       length: files.length,
     });
 
+    const coverRef = ref(storage, `${docRef.id}/cover`);
+    await uploadBytes(coverRef, coverFile);
     for (let i = 0; i < files.length; i++) {
       const storageRef = ref(storage, `${docRef.id}/${i}`);
       await uploadBytes(storageRef, files[i]);
@@ -140,7 +142,9 @@ function CreateDisk() {
         />
       </label>
       <UploadButtonWrapper>
-        <Button onClick={upload}>Upload</Button>
+        <LoadingButton loading={uploading} onClick={upload}>
+          Upload
+        </LoadingButton>
       </UploadButtonWrapper>
     </Container>
   );

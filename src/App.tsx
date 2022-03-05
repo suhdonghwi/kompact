@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
 import EditDisk from './pages/EditDisk';
+import DiskSlider2 from './components/DiskSlider2';
 import { Button } from '@mui/material';
 
 import { signOut } from 'firebase/auth';
@@ -53,6 +54,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-disk" element={<EditDisk />} />
           <Route path="/create-disk" element={<CreateDisk />} />
+          <Route path="/test" element={<DiskSlider2 email="" />} />
         </Routes>
       </BrowserRouter>
     </>

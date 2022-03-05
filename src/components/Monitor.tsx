@@ -72,10 +72,6 @@ export default function Monitor({ images }: MonitorProps) {
 
   return (
     <group>
-      <Suspense fallback={null}>
-        <Macintosh position={[0, 0, 0]} />
-      </Suspense>
-
       <mesh
         position={[0, 0.2035, 0.208]}
         rotation={[-Math.PI / 30, 0, 0]}
