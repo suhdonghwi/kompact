@@ -46,10 +46,14 @@ function Login() {
             name="password"
             defaultValue=""
             control={control}
-            rules={{ minLength: 6 }}
-            render={({ field }) => (
+            rules={{
+              minLength: { value: 6, message: '비밀번호는 최소 6자입니다.' },
+            }}
+            render={({ field, fieldState }) => (
               <TextField
                 label="비밀번호"
+                error={fieldState.error?.type === 'minLength'}
+                helperText={fieldState.error?.message}
                 type="password"
                 required
                 variant="outlined"

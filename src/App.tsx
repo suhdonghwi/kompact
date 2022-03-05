@@ -7,6 +7,11 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
 import EditDisk from './pages/EditDisk';
+import { Button } from '@mui/material';
+
+import { signOut } from 'firebase/auth';
+import { auth } from './firebase';
+import { useEffect } from 'react';
 
 const Container = styled.div`
   display: flex;
@@ -24,6 +29,9 @@ const Title = styled.h1`
 
 function App() {
   const user = useRecoilValue(userState);
+  useEffect(() => {
+    console.log(user?.email);
+  }, [user]);
   return (
     <>
       <Reset />
@@ -35,6 +43,7 @@ function App() {
             element={
               <Container>
                 <Title>Hello, world!</Title>
+                <Button onClick={() => signOut(auth)}>Sign Out</Button>
               </Container>
             }
           />

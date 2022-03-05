@@ -7,14 +7,16 @@ const firebaseUserEffect =
   ({ setSelf, trigger }) => {
     // Initialize atom value
     if (trigger === 'get') {
-      setSelf(auth.currentUser);
+      const userCopy = JSON.parse(JSON.stringify(auth.currentUser));
+      setSelf(userCopy);
     }
 
     return onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        setSelf(user);
+        const userCopy = JSON.parse(JSON.stringify(user));
+        setSelf(userCopy);
       } else {
         // User is signed out
         setSelf(null);

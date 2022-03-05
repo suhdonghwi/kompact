@@ -36,6 +36,7 @@ export default function DiskSlider({
   );
   const [springs, api] = useSprings(items.length, (i) => ({
     x: (i < items.length - 1 ? i : -1) * width,
+    y: 0,
   }));
   const prev = useRef([0, 1]);
   const target = useRef(null);
@@ -54,7 +55,7 @@ export default function DiskSlider({
           x: (-y % (width * items.length)) + width * rank,
           immediate: dy < 0 ? prevPosition > position : prevPosition < position,
           config: {
-            tension: (1 + items.length - configPos) * 10,
+            tension: (1 + items.length - configPos) * 100,
             friction: 30 + configPos * 20,
           },
         };
@@ -65,21 +66,17 @@ export default function DiskSlider({
   );
 
   const wheelOffset = useRef(0);
-  const dragOffset = useRef(0);
+  const dragXOffset = useRef(0);
+  const dragYOffset = useRef(0);
 
   useGesture(
     {
-      onDrag: ({ offset: [x], direction: [dx] }) => {
-        if (dx) {
-          dragOffset.current = -x;
-          runSprings(wheelOffset.current + -x, -dx);
-        }
-      },
+      onDrag: ({ offset: [x, y], direction: [dx, dy] }) => {},
       onWheel: ({ event, offset: [, y], direction: [, dy] }) => {
         event.preventDefault();
         if (dy) {
           wheelOffset.current = y;
-          runSprings(dragOffset.current + y, dy);
+          runSprings(wheelOffset.current + y, dy);
         }
       },
     },
@@ -88,7 +85,7 @@ export default function DiskSlider({
 
   return (
     <div ref={target} style={{ ...style, ...styles.container }}>
-      {springs.map(({ x }, i) => (
+      {springs.map(({ x, y }, i) => (
         <a.div
           key={i}
           style={{
@@ -97,6 +94,7 @@ export default function DiskSlider({
             willChange: 'transform',
             width,
             x,
+            y,
           }}
           children={children(items[i], i)}
         />

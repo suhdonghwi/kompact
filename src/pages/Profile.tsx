@@ -5,7 +5,7 @@ import { a } from '@react-spring/web';
 const items = [
   {
     css: 'url(/img/disk-ex-1.png)',
-    height: 100,
+    height: 10,
   },
   {
     css: 'url(/img/disk-ex-2.png)',
@@ -16,7 +16,27 @@ const items = [
     height: 100,
   },
   {
-    css: 'url(/img/disk-ex-4.png)',
+    css: 'url(/img/disk-ex-3.png)',
+    height: 100,
+  },
+  {
+    css: 'url(/img/disk-ex-3.png)',
+    height: 100,
+  },
+  {
+    css: 'url(/img/disk-ex-3.png)',
+    height: 100,
+  },
+  {
+    css: 'url(/img/disk-ex-3.png)',
+    height: 100,
+  },
+  {
+    css: 'url(/img/disk-ex-3.png)',
+    height: 100,
+  },
+  {
+    css: 'url(/img/disk-ex-3.png)',
     height: 100,
   },
 ];
@@ -24,7 +44,7 @@ const items = [
 const Content = styled.div`
   width: 100%;
   height: 100%;
-  padding: 70px 100px;
+  padding: 10px 10px;
 `;
 
 const Marker = styled.div`
@@ -44,13 +64,13 @@ const Image = styled(a.div)`
 
 const ListContainer = styled.div`
   width: 100%;
-  height: 500px;
+  height: 250px;
 `;
 
 const ImageList = () => {
   return (
     <ListContainer>
-      <DiskSlider items={items} width={100} visible={3}>
+      <DiskSlider items={items} width={250} visible={7}>
         {({ css }: any, i: any) => (
           <Content>
             <Marker>{String(i).padStart(2, '0')}</Marker>
@@ -62,11 +82,16 @@ const ImageList = () => {
   );
 };
 
+const Container = styled.div`
+  width: 100%;
+  height: 100vh;
+`;
+
 function Profile() {
   return (
-    <>
+    <Container>
       <ImageList />
-    </>
+    </Container>
   );
 }
 
