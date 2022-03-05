@@ -12,6 +12,7 @@ import { Button } from '@mui/material';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebase';
 import { useEffect } from 'react';
+import CreateDisk from './pages/CreateDisk';
 
 const Container = styled.div`
   display: flex;
@@ -51,6 +52,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-disk" element={<EditDisk />} />
+          <Route path="/create-disk" element={<CreateDisk />} />
         </Routes>
       </BrowserRouter>
     </>

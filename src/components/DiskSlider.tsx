@@ -1,6 +1,7 @@
-import { useRef, useCallback } from 'react';
-import { useGesture } from '@use-gesture/react';
-import { useSprings, a } from '@react-spring/web';
+import { useRef, useCallback, useEffect } from 'react';
+import { useDrag, useGesture } from '@use-gesture/react';
+import { useSprings, a, SpringValue, SpringRef } from '@react-spring/web';
+import { useSpring } from 'react-spring';
 
 const styles = {
   container: {
@@ -66,12 +67,9 @@ export default function DiskSlider({
   );
 
   const wheelOffset = useRef(0);
-  const dragXOffset = useRef(0);
-  const dragYOffset = useRef(0);
 
   useGesture(
     {
-      onDrag: ({ offset: [x, y], direction: [dx, dy] }) => {},
       onWheel: ({ event, offset: [, y], direction: [, dy] }) => {
         event.preventDefault();
         if (dy) {
@@ -85,20 +83,80 @@ export default function DiskSlider({
 
   return (
     <div ref={target} style={{ ...style, ...styles.container }}>
-      {springs.map(({ x, y }, i) => (
-        <a.div
+      {springs.map((spring, i) => (
+        <ItemContainer
           key={i}
-          style={{
-            position: 'absolute',
-            height: '100%',
-            willChange: 'transform',
-            width,
-            x,
-            y,
-          }}
-          children={children(items[i], i)}
+          spring={spring}
+          width={width}
+          api={api}
+          index={i}
+          render={children(items[i], i)}
         />
       ))}
     </div>
   );
 }
+
+const ItemContainer = ({
+  spring,
+  width,
+  api,
+  index,
+  render,
+}: {
+  spring: {
+    x: SpringValue<number>;
+    y: SpringValue<number>;
+  };
+  width: number;
+  api: SpringRef<{ x: number; y: number }>;
+  index: number;
+  render: any;
+}) => {
+  const target = useRef(null);
+
+  const runSpring = useCallback((x, y) => {
+    api.start((i) => {
+      return index === i ? { x, y } : {};
+    });
+  }, []);
+
+  const bind = useDrag(({ down, movement: [mx, my] }) => {
+    api.start({ x: down ? mx : 0, y: down ? my : 0, immediate: down });
+  });
+
+  /*
+  //const prevX = useRef(spring.x.get());
+  useGesture(
+    {
+      onDragStart: () => {
+        prevX = spring.x.get();
+      },
+      onDrag: ({ offset: [x, y] }) => {
+        runSpring(prevX + x, y);
+      },
+      onDragEnd: ({ offset: [x] }) => {
+        runSpring(prevX, 0);
+      },
+    },
+    {
+      target,
+      eventOptions: { passive: false },
+    },
+  );*/
+
+  return (
+    <a.div
+      ref={target}
+      style={{
+        position: 'absolute',
+        height: '100%',
+        willChange: 'transform',
+        width,
+        x: spring.x,
+        y: spring.y,
+      }}
+      children={render}
+    />
+  );
+};
