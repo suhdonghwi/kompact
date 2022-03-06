@@ -8,10 +8,22 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: #fdf6e3;
+  background-color: #e7d4a0;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+@font-face {
+  font-family: 'SANJUGotgam';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2112@1.0/SANJUGotgam.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html * {
+  font-family: 'SANJUGotgam' !important;
 }

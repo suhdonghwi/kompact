@@ -24,13 +24,6 @@ export default function Monitor({ images }: MonitorProps) {
     const canvas = canvasRef.current;
     canvas.width = 1024;
     canvas.height = 1024;
-
-    const context = canvas.getContext('2d');
-    if (context) {
-      context.rect(0, 0, canvas.width, canvas.height);
-      context.fillStyle = 'rgb(10, 10, 10)';
-      context.fill();
-    }
   }, []);
 
   useFrame(() => {
@@ -39,6 +32,7 @@ export default function Monitor({ images }: MonitorProps) {
 
     if (context) {
       const image = images[index];
+      if (!image || !image.complete) return;
 
       const realWidth = canvas.width - 100;
       const realHeight = canvas.height - 300;
@@ -51,6 +45,10 @@ export default function Monitor({ images }: MonitorProps) {
         showWidth = realWidth;
         showHeight = image.width * (realWidth / image.width);
       }
+
+      context.rect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = 'rgb(10, 10, 10)';
+      context.fill();
 
       context.drawImage(
         images[index],
@@ -67,8 +65,8 @@ export default function Monitor({ images }: MonitorProps) {
   });
 
   const onClick = useCallback(() => {
-    setIndex((idx) => (idx + 1) % 2);
-  }, []);
+    setIndex((idx) => (idx + 1) % images.length);
+  }, [images]);
 
   return (
     <group>

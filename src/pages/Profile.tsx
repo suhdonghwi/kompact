@@ -1,18 +1,23 @@
 import styled from 'styled-components';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
-import DiskSlider from '../components/DiskSlider';
+import DiskSlider, { DiskItem } from '../components/DiskSlider';
 import Rom from '../components/Rom';
 
 import { easings, useSpring } from '@react-spring/three';
-import { PerspectiveCamera } from '@react-three/drei';
+import { PerspectiveCamera, PresentationControls } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
+
 import Monitor from '../components/Monitor';
-import { useMemo } from 'react';
-import Macintosh from '../models/Macintosh';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../atoms/firebase';
+import Logo from '../components/Logo';
+import { IconButton } from '@mui/material';
+import { Add as AddIcon, ExitToApp as SignOutIcon } from '@mui/icons-material';
 
 function CameraTransition({ show }: { show: boolean }) {
   const { camera } = useThree();
@@ -39,22 +44,40 @@ function CameraTransition({ show }: { show: boolean }) {
   return <></>;
 }
 
-function ThreeCanvas() {
-  const images = useMemo(() => {
-    const img = new Image();
-    img.src = 'img/disk-ex-1.png';
+function ThreeCanvas({ images }: { images: string[] }) {
+  const loadedImages = useMemo(
+    () =>
+      images.map((image) => {
+        const img = new Image();
+        img.src = image;
+        img.crossOrigin = 'anonymous';
+        return img;
+      }),
+    [images],
+  );
 
-    const img2 = new Image();
-    img2.src = 'img/disk-ex-2.png';
-
-    return [img, img2];
-  }, []);
+  useEffect(() => {
+    console.log(loadedImages);
+  }, [loadedImages]);
 
   return (
     <Canvas>
       <ambientLight intensity={0.7} />
 
-      <Macintosh position={[0, 0, 0]} />
+      <pointLight position={[5, 10, 7]} intensity={1.0} />
+      <PerspectiveCamera position={[0, 0.18, 0.48]} makeDefault />
+      <CameraTransition show={loadedImages.length > 0} />
+
+      <PresentationControls
+        global
+        snap
+        zoom={0.8}
+        rotation={[0, 0, 0]}
+        polar={[-Math.PI / 8, Math.PI / 8]}
+        azimuth={[-Math.PI / 16, Math.PI / 16]}
+      >
+        <Monitor images={loadedImages} />
+      </PresentationControls>
     </Canvas>
   );
 }
@@ -67,6 +90,10 @@ const ThreeBackground = styled.div`
 
   width: 100vw;
   height: 100vh;
+
+  &.front {
+    z-index: 1;
+  }
 `;
 
 const Container = styled.div`
@@ -74,26 +101,67 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
+const StyledLogo = styled(Logo)`
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+`;
+
+const ButtonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 999;
+`;
+
 function Profile() {
   const user = useRecoilValue(userState);
-  console.log(user);
+  const navigate = useNavigate();
 
-  /*
-  if (!user) {
-    return <Navigate to="login" />;
-  }
-  */
+  const [inRom, setInRom] = useState<DiskItem | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+  const onDrop = useCallback((item: DiskItem, x: number, y: number) => {
+    if (y < 400) {
+      setInRom(item);
+
+      setTimeout(() => {
+        setImages(item.images.map(({ url }) => url));
+        console.log(item);
+      }, 2500);
+    }
+  }, []);
 
   return (
     <>
-      <ThreeBackground>
-        <ThreeCanvas />
+      <ThreeBackground className={inRom === null ? '' : 'front'}>
+        <ThreeCanvas images={images} />
       </ThreeBackground>
-
       <Container>
-        <Rom />
-        <DiskSlider email="sgmin.park@gmail.com" />
+        <Rom visible={inRom === null} />
+        <DiskSlider
+          visible={inRom === null}
+          email={user?.email ?? ''}
+          inRom={inRom}
+          onDrop={onDrop}
+        />
       </Container>
+      <ButtonWrapper>
+        <IconButton
+          onClick={async () => {
+            navigate('/create-disk');
+          }}
+        >
+          <AddIcon />
+        </IconButton>
+        <IconButton
+          onClick={async () => {
+            await signOut(auth);
+            navigate('/login');
+          }}
+        >
+          <SignOutIcon />
+        </IconButton>
+      </ButtonWrapper>
     </>
   );
 }

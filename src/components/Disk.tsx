@@ -11,7 +11,7 @@ const Disk = styled.div<DiskProps>`
   background: ${({ backgroundImage }) =>
     backgroundImage
       ? `url("${backgroundImage}")`
-      : 'conic-gradient( white,  white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white, white, white, white, grey, grey, violet, deepskyblue, aqua, palegreen, yellow, orange, red, grey, grey, white)'};
+      : 'conic-gradient( palegreen, violet, deepskyblue, aqua, palegreen, yellow, orange, white, white, white,  white, white, violet, deepskyblue, aqua, palegreen)'};
   background-size: cover;
 
   &:before,

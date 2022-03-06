@@ -20,6 +20,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { Add as AddIcon } from '@mui/icons-material';
 import Disk from '../components/Disk';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -30,7 +31,6 @@ const Container = styled.div`
 
 const ImagesWrapper = styled.div`
   width: 100vw;
-  margin-left: 2rem;
   margin-top: 1rem;
   overflow-x: scroll;
 `;
@@ -46,9 +46,11 @@ const StyledDisk = styled(Disk)`
   height: 50vw;
   bottom: -25vw;
   left: 25vw;
+  cursor: pointer;
 `;
 
 const AddButton = styled(Paper)`
+  cursor: pointer;
   width: 30vh;
   height: 30vh;
   display: flex;
@@ -60,11 +62,18 @@ const InvisibleInput = styled.input`
   display: none;
 `;
 
+const Title = styled.h1`
+  margin: 1rem 0;
+  text-align: center;
+  font-size: 48px;
+`;
+
 function CreateDisk() {
   const [diskName, setDiskName] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
   const email = useRecoilValue(userState)?.email;
 
   const upload = async () => {
@@ -88,13 +97,15 @@ function CreateDisk() {
     }
     setUploading(false);
     alert('업로드 성공!!');
+    navigate('/profile');
   };
 
   return (
     <Container>
+      <Title>콤팩트 디스크 굽기</Title>
       <Center maxWidth="lg">
         <TextField
-          placeholder="Disk Name"
+          placeholder="디스크 이름"
           onChange={(e) => {
             setDiskName(e.target.value);
           }}
@@ -102,35 +113,36 @@ function CreateDisk() {
           fullWidth
           disabled={uploading}
         />
+        <ImagesWrapper>
+          <Stack direction="row" spacing={2}>
+            {files.map((file) => (
+              <img
+                key={file.name}
+                src={`${URL.createObjectURL(file)}`}
+                style={{ height: '30vh' }}
+                loading="lazy"
+              />
+            ))}
+            <label htmlFor="contained-button-file">
+              <InvisibleInput
+                id="contained-button-file"
+                type="file"
+                multiple
+                onChange={(e) => {
+                  setFiles((prevFiles) => [
+                    ...prevFiles,
+                    ...Array.from(e.target.files || []),
+                  ]);
+                }}
+              />
+              <AddButton variant="outlined">
+                <AddIcon />
+              </AddButton>
+            </label>
+          </Stack>
+        </ImagesWrapper>
       </Center>
-      <ImagesWrapper>
-        <Stack direction="row" spacing={2}>
-          {files.map((file) => (
-            <img
-              key={file.name}
-              src={`${URL.createObjectURL(file)}`}
-              style={{ height: '30vh' }}
-              loading="lazy"
-            />
-          ))}
-          <label htmlFor="contained-button-file">
-            <InvisibleInput
-              id="contained-button-file"
-              type="file"
-              multiple
-              onChange={(e) => {
-                setFiles((prevFiles) => [
-                  ...prevFiles,
-                  ...Array.from(e.target.files || []),
-                ]);
-              }}
-            />
-            <AddButton variant="outlined">
-              <AddIcon />
-            </AddButton>
-          </label>
-        </Stack>
-      </ImagesWrapper>
+
       <label htmlFor="cover-image">
         <InvisibleInput
           id="cover-image"
@@ -147,7 +159,7 @@ function CreateDisk() {
       </label>
       <UploadButtonWrapper>
         <LoadingButton loading={uploading} onClick={upload}>
-          Upload
+          업로드
         </LoadingButton>
       </UploadButtonWrapper>
     </Container>

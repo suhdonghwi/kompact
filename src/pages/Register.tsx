@@ -9,6 +9,8 @@ import {
 import { Container, Stack, styled, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { auth } from '../firebase';
+import Logo from '../components/Logo';
+import { useNavigate } from 'react-router-dom';
 
 interface RegisterData {
   username: string;
@@ -19,6 +21,7 @@ interface RegisterData {
 function Register() {
   const { control, handleSubmit } = useForm<RegisterData>({});
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const onSubmit = useCallback(async (data: RegisterData) => {
     setLoading(true);
@@ -30,6 +33,7 @@ function Register() {
         data.password,
       );
       await updateProfile(user, { displayName: data.username });
+      navigate('/profile');
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -40,6 +44,7 @@ function Register() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Container maxWidth="xs">
         <CenteredStack spacing={2}>
+          <Logo />
           <Controller
             name="username"
             defaultValue=""
